@@ -35,10 +35,10 @@ const menuItems = [
   { id: 'colaboradores', label: 'Colaboradores', icon: UserCog, emoji: '👥', path: '/dashboard' },
   { id: 'relatorios', label: 'Relatórios', icon: FileText, emoji: '📊', path: '/dashboard' },
   // Novos itens migrados do hospital-dashboard-fusion
-  { id: 'faturas', label: 'Faturas', icon: DollarSign, emoji: '💵', path: '/dashboard' },
-  { id: 'encaminhamentos', label: 'Encaminhamentos', icon: FolderOpen, emoji: '📂', path: '/dashboard' },
-  { id: 'cirurgias', label: 'Cirurgias', icon: Bed, emoji: '🛏️', path: '/dashboard' },
-  { id: 'procedimentos', label: 'Procedimentos', icon: Stethoscope, emoji: '🧪', path: '/dashboard' },
+{ id: 'faturas', label: 'Faturas', icon: DollarSign, emoji: '💵', path: '/faturas' },
+{ id: 'encaminhamentos', label: 'Encaminhamentos', icon: FolderOpen, emoji: '📂', path: '/encaminhamentos' },
+{ id: 'cirurgias', label: 'Cirurgias', icon: Bed, emoji: '🛏️', path: '/cirurgias' },
+{ id: 'procedimentos', label: 'Procedimentos', icon: Stethoscope, emoji: '🧪', path: '/procedimentos' },
 
 ];
 

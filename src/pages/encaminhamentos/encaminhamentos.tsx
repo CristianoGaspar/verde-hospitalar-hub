@@ -20,6 +20,7 @@ import { BarChart3, TrendingUp } from 'lucide-react';
 
 //import { ArrowLeft, Package, Trash2, Edit, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
+import HospitalLayout from "@/components/HospitalLayout";
 const Encaminhamentos = () => {
   const stats = [
     {
@@ -96,7 +97,8 @@ const Encaminhamentos = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <HospitalLayout currentPage="encaminhamentos" onPageChange={() => {}}>
+      <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -205,6 +207,7 @@ const Encaminhamentos = () => {
         </CardContent>
       </Card>
     </div>
+     </HospitalLayout>
   )
 }
 
