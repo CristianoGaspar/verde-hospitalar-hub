@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  UserCheck, 
-  Users, 
-  Calendar, 
-  Clock, 
+import {
+  Home,
+  UserCheck,
+  Users,
+  Calendar,
+  Clock,
   UserCog,
   Menu,
   X,
@@ -34,10 +34,11 @@ const menuItems = [
   { id: 'colaboradores', label: 'Colaboradores', icon: UserCog, emoji: '👥', path: '/dashboard' },
   { id: 'relatorios', label: 'Relatórios', icon: FileText, emoji: '📊', path: '/dashboard' },
   // Novos itens migrados do hospital-dashboard-fusion
-  { id: 'encaminhamentos1', label: 'Encaminhamentos 1', icon: Home, emoji: '📂', path: '/dashboard' },
-  { id: 'encaminhamentos2', label: 'Encaminhamentos 2', icon: Home, emoji: '🗃️', path: '/dashboard' },
-  { id: 'faturamentoA', label: 'Faturamento A', icon: Home, emoji: '💵', path: '/dashboard' },
-  { id: 'faturamentoB', label: 'Faturamento B', icon: Home, emoji: '💰', path: '/dashboard' }
+  { id: 'faturas', label: 'Faturas', icon: DollarSign, emoji: '💵', path: '/dashboard' },
+  { id: 'encaminhamentos', label: 'Encaminhamentos', icon: FolderOpen, emoji: '📂', path: '/dashboard' },
+  { id: 'cirurgias', label: 'Cirurgias', icon: Bed, emoji: '🛏️', path: '/dashboard' },
+  { id: 'procedimentos', label: 'Procedimentos', icon: Stethoscope, emoji: '🧪', path: '/dashboard' },
+
 ];
 
 export default function HospitalLayout({ children, currentPage, onPageChange }: HospitalLayoutProps) {
@@ -80,10 +81,10 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
           <nav className="mt-6 lg:mt-0">
             <ul className="space-y-2 px-4">
               {menuItems.map((item) => {
-                const isActive = location.pathname === item.path || 
+                const isActive = location.pathname === item.path ||
                   (item.id === 'dashboard' && location.pathname === '/dashboard');
                 const Icon = item.icon;
-                
+
                 return (
                   <li key={item.id}>
                     <Link
@@ -91,8 +92,8 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
                       onClick={() => setSidebarOpen(false)}
                       className={cn(
                         "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-hospital-secondary",
-                        isActive 
-                          ? "bg-hospital-primary text-white shadow-md" 
+                        isActive
+                          ? "bg-hospital-primary text-white shadow-md"
                           : "text-hospital-dark hover:text-hospital-primary"
                       )}
                     >
@@ -119,7 +120,7 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
 
         {/* Overlay móvel */}
         {sidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
