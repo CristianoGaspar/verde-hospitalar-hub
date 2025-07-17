@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, 
   UserCheck, 
@@ -24,18 +25,19 @@ interface HospitalLayoutProps {
 }
 
 const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: Home, emoji: '🏥' },
-  { id: 'medicos', label: 'Médicos', icon: UserCheck, emoji: '👨‍⚕️' },
-  { id: 'pacientes', label: 'Pacientes', icon: Users, emoji: '🧑‍💼' },
-  { id: 'consultas', label: 'Consultas', icon: Stethoscope, emoji: '🩺' },
-  { id: 'agendamentos', label: 'Agendamentos', icon: Calendar, emoji: '📅' },
-  { id: 'plantoes', label: 'Plantões', icon: Clock, emoji: '⏱️' },
-  { id: 'colaboradores', label: 'Colaboradores', icon: UserCog, emoji: '👥' },
-  { id: 'relatorios', label: 'Relatórios', icon: FileText, emoji: '📊' },
+  { id: 'dashboard', label: 'Dashboard', icon: Home, emoji: '🏥', path: '/dashboard' },
+  { id: 'medicos', label: 'Médicos', icon: UserCheck, emoji: '👨‍⚕️', path: '/doctors' },
+  { id: 'pacientes', label: 'Pacientes', icon: Users, emoji: '🧑‍💼', path: '/patients' },
+  { id: 'consultas', label: 'Consultas', icon: Stethoscope, emoji: '🩺', path: '/appointments' },
+  { id: 'agendamentos', label: 'Agendamentos', icon: Calendar, emoji: '📅', path: '/appointments' },
+  { id: 'plantoes', label: 'Plantões', icon: Clock, emoji: '⏱️', path: '/dashboard' },
+  { id: 'colaboradores', label: 'Colaboradores', icon: UserCog, emoji: '👥', path: '/dashboard' },
+  { id: 'relatorios', label: 'Relatórios', icon: FileText, emoji: '📊', path: '/dashboard' },
 ];
 
 export default function HospitalLayout({ children, currentPage, onPageChange }: HospitalLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-hospital-light">
@@ -73,16 +75,15 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
           <nav className="mt-6 lg:mt-0">
             <ul className="space-y-2 px-4">
               {menuItems.map((item) => {
-                const isActive = currentPage === item.id;
+                const isActive = location.pathname === item.path || 
+                  (item.id === 'dashboard' && location.pathname === '/dashboard');
                 const Icon = item.icon;
                 
                 return (
                   <li key={item.id}>
-                    <button
-                      onClick={() => {
-                        onPageChange(item.id);
-                        setSidebarOpen(false);
-                      }}
+                    <Link
+                      to={item.path}
+                      onClick={() => setSidebarOpen(false)}
                       className={cn(
                         "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 hover:bg-hospital-secondary",
                         isActive 
@@ -95,7 +96,7 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
                       </span>
                       <Icon className="h-5 w-5" />
                       <span className="font-medium">{item.label}</span>
-                    </button>
+                    </Link>
                   </li>
                 );
               })}

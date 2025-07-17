@@ -22,6 +22,8 @@ import SurgicalToolsRegister from "./pages/surgical-tools/SurgicalToolsRegister"
 import SurgicalToolsView from "./pages/surgical-tools/SurgicalToolsView";
 import SurgicalEquipmentRegister from "./pages/surgical-equipment/SurgicalEquipmentRegister";
 import SurgicalEquipmentView from "./pages/surgical-equipment/SurgicalEquipmentView";
+import PatientsRegister from "./pages/patients/PatientsRegister";
+import PatientsView from "./pages/patients/PatientsView";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<Index />} />
+          
+          {/* Patients */}
+          <Route path="/patients" element={<PatientsView />} />
+          <Route path="/patients/register" element={<PatientsRegister />} />
           
           {/* Doctors */}
           <Route path="/doctors" element={<DoctorsView />} />
