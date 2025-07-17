@@ -6,25 +6,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, UserPlus, Trash2, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const doctorSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-  crm: z.string().regex(/^\d{4,6}\/[A-Z]{2}$/, "CRM deve ter o formato: 12345/SP"),
+  fullName: z.string().min(1, "Nome completo é obrigatório"),
+  crm: z.string().regex(/^CRM\/[A-Z]{2}\s\d{4,6}$/, "CRM deve ter o formato: CRM/UF 000000"),
   specialty: z.string().min(1, "Especialidade é obrigatória"),
   email: z.string().email("Email inválido"),
   phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
   status: z.enum(["active", "inactive"]),
   shiftDays: z.array(z.string()).min(1, "Selecione pelo menos um dia"),
-  startTime: z.string().min(1, "Horário de entrada é obrigatório"),
-  endTime: z.string().min(1, "Horário de saída é obrigatório"),
+  entryTime: z.string().min(1, "Horário de entrada é obrigatório"),
+  exitTime: z.string().min(1, "Horário de saída é obrigatório"),
 });
 
 type DoctorForm = z.infer<typeof doctorSchema>;
@@ -43,6 +41,11 @@ const weekDays = [
   { id: "sunday", label: "Domingo" },
 ];
 
+const specialties = [
+  "Cardiologia", "Dermatologia", "Ginecologia", "Neurologia", "Ortopedia",
+  "Pediatria", "Psiquiatria", "Radiologia", "Urologia", "Anestesiologia"
+];
+
 export default function DoctorsRegister() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
@@ -58,8 +61,8 @@ export default function DoctorsRegister() {
   } = useForm<DoctorForm>({
     resolver: zodResolver(doctorSchema),
     defaultValues: {
-      shiftDays: [],
       status: "active",
+      shiftDays: [],
     },
   });
 
@@ -104,6 +107,10 @@ export default function DoctorsRegister() {
     }
   };
 
+  const getDayLabels = (dayIds: string[]) => {
+    return dayIds.map(id => weekDays.find(d => d.id === id)?.label).filter(Boolean).join(", ");
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -116,7 +123,7 @@ export default function DoctorsRegister() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-primary">Cadastro de Médicos</h1>
-            <p className="text-muted-foreground">Gerencie o cadastro dos médicos do hospital</p>
+            <p className="text-muted-foreground">Gerencie os médicos do hospital</p>
           </div>
         </div>
 
@@ -132,20 +139,31 @@ export default function DoctorsRegister() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome Completo *</Label>
-                  <Input id="name" {...register("name")} />
-                  {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
+                  <Label htmlFor="fullName">Nome Completo *</Label>
+                  <Input id="fullName" {...register("fullName")} />
+                  {errors.fullName && <p className="text-destructive text-sm">{errors.fullName.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="crm">CRM *</Label>
-                  <Input id="crm" placeholder="12345/SP" {...register("crm")} />
+                  <Input id="crm" placeholder="CRM/SP 123456" {...register("crm")} />
                   {errors.crm && <p className="text-destructive text-sm">{errors.crm.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="specialty">Especialidade *</Label>
-                  <Input id="specialty" {...register("specialty")} />
+                  <Select onValueChange={(value) => setValue("specialty", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a especialidade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {specialties.map((specialty) => (
+                        <SelectItem key={specialty} value={specialty}>
+                          {specialty}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.specialty && <p className="text-destructive text-sm">{errors.specialty.message}</p>}
                 </div>
 
@@ -172,18 +190,19 @@ export default function DoctorsRegister() {
                       <SelectItem value="inactive">Inativo</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.status && <p className="text-destructive text-sm">{errors.status.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="startTime">Horário de Entrada *</Label>
-                  <Input id="startTime" type="time" {...register("startTime")} />
-                  {errors.startTime && <p className="text-destructive text-sm">{errors.startTime.message}</p>}
+                  <Label htmlFor="entryTime">Horário de Entrada *</Label>
+                  <Input id="entryTime" type="time" {...register("entryTime")} />
+                  {errors.entryTime && <p className="text-destructive text-sm">{errors.entryTime.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="endTime">Horário de Saída *</Label>
-                  <Input id="endTime" type="time" {...register("endTime")} />
-                  {errors.endTime && <p className="text-destructive text-sm">{errors.endTime.message}</p>}
+                  <Label htmlFor="exitTime">Horário de Saída *</Label>
+                  <Input id="exitTime" type="time" {...register("exitTime")} />
+                  {errors.exitTime && <p className="text-destructive text-sm">{errors.exitTime.message}</p>}
                 </div>
               </div>
 
@@ -230,22 +249,26 @@ export default function DoctorsRegister() {
                     <TableHead>CRM</TableHead>
                     <TableHead>Especialidade</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Plantão</TableHead>
+                    <TableHead>Plantões</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {doctors.map((doctor) => (
                     <TableRow key={doctor.id}>
-                      <TableCell className="font-medium">{doctor.name}</TableCell>
+                      <TableCell className="font-medium">{doctor.fullName}</TableCell>
                       <TableCell>{doctor.crm}</TableCell>
                       <TableCell>{doctor.specialty}</TableCell>
                       <TableCell>
-                        <Badge variant={doctor.status === "active" ? "default" : "secondary"}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          doctor.status === "active" 
+                            ? "bg-green-100 text-green-800" 
+                            : "bg-red-100 text-red-800"
+                        }`}>
                           {doctor.status === "active" ? "Ativo" : "Inativo"}
-                        </Badge>
+                        </span>
                       </TableCell>
-                      <TableCell>{doctor.startTime} - {doctor.endTime}</TableCell>
+                      <TableCell className="text-sm">{getDayLabels(doctor.shiftDays)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button
