@@ -25,6 +25,11 @@ import SurgicalEquipmentView from "./pages/surgical-equipment/SurgicalEquipmentV
 import PatientsRegister from "./pages/patients/PatientsRegister";
 import PatientsView from "./pages/patients/PatientsView";
 
+import Encaminhamentos from "./pages/encaminhamentos/encaminhamentos";
+import Procedimentos from "./pages/procedimentos/procedimentos";
+import Cirurgias from "./pages/cirurgias/cirurgias";
+import Faturas from "./pages/faturas/faturas";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -36,43 +41,58 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<Index />} />
-          
+
           {/* Patients */}
           <Route path="/patients" element={<PatientsView />} />
           <Route path="/patients/register" element={<PatientsRegister />} />
-          
+
           {/* Doctors */}
           <Route path="/doctors" element={<DoctorsView />} />
           <Route path="/doctors/register" element={<DoctorsRegister />} />
-          
+
           {/* Appointments */}
           <Route path="/appointments" element={<AppointmentsView />} />
           <Route path="/appointments/register" element={<AppointmentsRegister />} />
-          
+
           {/* Insurance */}
           <Route path="/insurance" element={<InsuranceView />} />
           <Route path="/insurance/register" element={<InsuranceRegister />} />
-          
+
           {/* Medications */}
           <Route path="/medications" element={<MedicationsView />} />
           <Route path="/medications/register" element={<MedicationsRegister />} />
-          
+
           {/* Hospital Supplies */}
           <Route path="/hospital-supplies" element={<HospitalSuppliesView />} />
           <Route path="/hospital-supplies/register" element={<HospitalSuppliesRegister />} />
-          
+
           {/* Cleaning Supplies */}
           <Route path="/cleaning-supplies" element={<CleaningSuppliesView />} />
           <Route path="/cleaning-supplies/register" element={<CleaningSuppliesRegister />} />
-          
+
           {/* Surgical Tools */}
           <Route path="/surgical-tools" element={<SurgicalToolsView />} />
           <Route path="/surgical-tools/register" element={<SurgicalToolsRegister />} />
-          
+
           {/* Surgical Equipment */}
           <Route path="/surgical-equipment" element={<SurgicalEquipmentView />} />
           <Route path="/surgical-equipment/register" element={<SurgicalEquipmentRegister />} />
-          
+
+          {/* Encaminhamentos */}
+          <Route path="/encaminhamentos" element={< Encaminhamentos />} />
+
+          {/* Procedimentos */}
+          <Route path="/procedimentos" element={< Procedimentos />} />
+
+          {/* Cirurgias */}
+          <Route path="/cirurgias" element={< Cirurgias />} />
+
+          {/* Faturas */}
+          <Route path="/faturas" element={< Faturas />} />
+
+
+
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

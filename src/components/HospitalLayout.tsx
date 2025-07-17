@@ -33,6 +33,11 @@ const menuItems = [
   { id: 'plantoes', label: 'Plantões', icon: Clock, emoji: '⏱️', path: '/dashboard' },
   { id: 'colaboradores', label: 'Colaboradores', icon: UserCog, emoji: '👥', path: '/dashboard' },
   { id: 'relatorios', label: 'Relatórios', icon: FileText, emoji: '📊', path: '/dashboard' },
+  // Novos itens migrados do hospital-dashboard-fusion
+  { id: 'encaminhamentos1', label: 'Encaminhamentos 1', icon: Home, emoji: '📂', path: '/dashboard' },
+  { id: 'encaminhamentos2', label: 'Encaminhamentos 2', icon: Home, emoji: '🗃️', path: '/dashboard' },
+  { id: 'faturamentoA', label: 'Faturamento A', icon: Home, emoji: '💵', path: '/dashboard' },
+  { id: 'faturamentoB', label: 'Faturamento B', icon: Home, emoji: '💰', path: '/dashboard' }
 ];
 
 export default function HospitalLayout({ children, currentPage, onPageChange }: HospitalLayoutProps) {

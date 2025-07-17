@@ -1,17 +1,18 @@
-
 import React, { useState } from 'react';
 import HospitalLayout from '@/components/HospitalLayout';
 import Dashboard from '@/components/Dashboard';
 import Medicos from '@/components/Medicos';
 import Pacientes from '@/components/Pacientes';
 import PlaceholderPage from '@/components/PlaceholderPage';
-import { 
-  Stethoscope, 
-  Calendar, 
-  Clock, 
-  Users, 
+import {
+  Stethoscope,
+  Calendar,
+  Clock,
+  Users,
   FileText,
-  Activity
+  Activity,
+  FolderOpen,
+  DollarSign
 } from 'lucide-react';
 
 const Index = () => {
@@ -102,6 +103,68 @@ const Index = () => {
               "Estoque de medicamentos",
               "Materiais hospitalares",
               "Exportação PDF e Excel"
+            ]}
+          />
+        );
+
+      // Novas opções do hospital-dashboard-fusion
+      case 'encaminhamentos1':
+        return (
+          <PlaceholderPage
+            title="Encaminhamentos 1"
+            description="Gerencie os encaminhamentos médicos"
+            icon={<FolderOpen className="h-6 w-6 text-white" />}
+            features={[
+              "Cadastro de encaminhamentos",
+              "Filtro por especialidade",
+              "Encaminhamento automático",
+              "Histórico por paciente",
+              "Vinculação com convênios"
+            ]}
+          />
+        );
+      case 'encaminhamentos2':
+        return (
+          <PlaceholderPage
+            title="Encaminhamentos 2"
+            description="Controle avançado de encaminhamentos"
+            icon={<FolderOpen className="h-6 w-6 text-white" />}
+            features={[
+              "Listagem detalhada",
+              "Acompanhamento de status",
+              "Notificações de retorno",
+              "Reencaminhamentos",
+              "Exportações personalizadas"
+            ]}
+          />
+        );
+      case 'faturamentoA':
+        return (
+          <PlaceholderPage
+            title="Faturamento A"
+            description="Faturamento por convênios"
+            icon={<DollarSign className="h-6 w-6 text-white" />}
+            features={[
+              "Conferência de valores",
+              "Emissão de faturas",
+              "Exportação para TISS",
+              "Histórico financeiro",
+              "Alertas de pendências"
+            ]}
+          />
+        );
+      case 'faturamentoB':
+        return (
+          <PlaceholderPage
+            title="Faturamento B"
+            description="Gestão financeira hospitalar"
+            icon={<DollarSign className="h-6 w-6 text-white" />}
+            features={[
+              "Relatórios de receita",
+              "Despesas por setor",
+              "Rateios financeiros",
+              "Gestão de cobranças",
+              "Conciliação bancária"
             ]}
           />
         );
