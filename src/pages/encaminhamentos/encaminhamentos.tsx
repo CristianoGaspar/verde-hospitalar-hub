@@ -6,12 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { BackButton } from "@/components/ui/back-button";
+import {  ArrowLeft,  Package,  Trash2,  Edit,  AlertTriangle,  Download,  Plus,  Search,  Filter,  User,  Clock,  DollarSign,  Activity} from "lucide-react";
+import {  Dialog,  DialogTrigger,  DialogContent,  DialogHeader,  DialogTitle} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Package, Trash2, Edit, AlertTriangle } from "lucide-react";
+import Calendar from '@/components/ui/CalendarIcon';
+import Users from '@/components/ui/UsersIcon';
+import { BarChart3, TrendingUp } from 'lucide-react';
+
+//import { ArrowLeft, Package, Trash2, Edit, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
+import HospitalLayout from "@/components/HospitalLayout";
 const Encaminhamentos = () => {
   const stats = [
     {
@@ -88,7 +97,8 @@ const Encaminhamentos = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <HospitalLayout currentPage="encaminhamentos" onPageChange={() => {}}>
+      <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -197,6 +207,7 @@ const Encaminhamentos = () => {
         </CardContent>
       </Card>
     </div>
+     </HospitalLayout>
   )
 }
 

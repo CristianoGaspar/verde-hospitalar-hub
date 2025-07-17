@@ -4,6 +4,11 @@ import Dashboard from '@/components/Dashboard';
 import Medicos from '@/components/Medicos';
 import Pacientes from '@/components/Pacientes';
 import PlaceholderPage from '@/components/PlaceholderPage';
+import Faturas from '@/pages/faturas/faturas';
+import Encaminhamentos from '@/pages/encaminhamentos/encaminhamentos';
+import Cirurgias from '@/pages/cirurgias/cirurgias';
+import Procedimentos from '@/pages/procedimentos/procedimentos';
+
 import {
   Stethoscope,
   Calendar,
@@ -26,6 +31,14 @@ const Index = () => {
         return <Medicos />;
       case 'pacientes':
         return <Pacientes />;
+      case 'faturas':
+        return <Faturas />;
+      case 'encaminhamentos':
+        return <Encaminhamentos />;
+      case 'cirurgias':
+        return <Cirurgias />;
+      case 'procedimentos':
+        return <Procedimentos />;
       case 'consultas':
         return (
           <PlaceholderPage
