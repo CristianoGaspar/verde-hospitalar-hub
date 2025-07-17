@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { DollarSign, FolderOpen } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
