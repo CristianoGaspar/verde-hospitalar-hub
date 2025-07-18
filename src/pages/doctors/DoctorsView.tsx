@@ -1,5 +1,5 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getDoctors } from "@/services/doctors/getDoctors";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,20 @@ const DoctorsView = () => {
     present: ""
   });
 
-  const doctors = [
-    { id: 1, name: "Dr. Maria Silva", crm: "CRM/SP 123456", specialty: "Cardiologia", status: "Ativo", present: true, shift: "Manhã" },
-    { id: 2, name: "Dr. João Santos", crm: "CRM/SP 789012", specialty: "Pediatria", status: "Ativo", present: false, shift: "Tarde" },
-    { id: 3, name: "Dr. Ana Costa", crm: "CRM/SP 345678", specialty: "Neurologia", status: "Inativo", present: false, shift: "Noite" },
-  ];
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await getDoctors();
+        setDoctors(data);
+      } catch (err) {
+        console.error("Erro ao buscar médicos:", err);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
 
   const dashboardData = {
     affiliated: 45,
@@ -125,12 +134,20 @@ const DoctorsView = () => {
               <TableBody>
                 {doctors.map((doctor) => (
                   <TableRow key={doctor.id}>
-                    <TableCell className="font-medium">{doctor.name}</TableCell>
+                    <TableCell className="font-medium">{doctor.full_name}</TableCell>
                     <TableCell>{doctor.crm}</TableCell>
                     <TableCell>{doctor.specialty}</TableCell>
-                    <TableCell><Badge variant={doctor.status === "Ativo" ? "default" : "secondary"}>{doctor.status}</Badge></TableCell>
-                    <TableCell><Badge variant={doctor.present ? "default" : "destructive"}>{doctor.present ? "Sim" : "Não"}</Badge></TableCell>
-                    <TableCell>{doctor.shift}</TableCell>
+                    <TableCell>
+                      <Badge variant={doctor.status === "Ativo" ? "default" : "secondary"}>
+                        {doctor.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={doctor.present ? "default" : "destructive"}>
+                        {doctor.present ? "Sim" : "Não"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{(doctor.shiftDays && doctor.shiftDays[0]) || "—"}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm">Ver</Button>
