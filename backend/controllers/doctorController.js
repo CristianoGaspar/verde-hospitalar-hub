@@ -18,21 +18,19 @@ exports.createDoctor = async (req, res) => {
   }
 };
 
-exports.getAllDoctors = (req, res) => {
-  const query = "SELECT * FROM doctors";
-  
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Erro ao buscar médicos:", err);
-      return res.status(500).json({ erro: "Erro ao buscar médicos" });
-    }
-
-    // converte JSON string de shiftDays para array novamente
+exports.getAllDoctors = async (req, res) => {
+  try {
+    const [results] = await db.query("SELECT * FROM doctors");
+    
     const formatted = results.map((doctor) => ({
       ...doctor,
       shiftDays: JSON.parse(doctor.shiftDays || "[]")
     }));
 
     res.json(formatted);
-  });
+  } catch (err) {
+    console.error("Erro ao buscar médicos:", err);
+    res.status(500).json({ erro: "Erro ao buscar médicos" });
+  }
 };
+
