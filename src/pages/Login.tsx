@@ -15,11 +15,50 @@ const Login = () => {
     userType: ''
   });
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Independente dos dados, redireciona para o dashboard
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch('http://localhost:3001/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: formData.username,
+        senha: formData.password
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.erro || 'Falha no login');
+      return;
+    }
+
+    // Mapeia o tipo selecionado para o valor no banco
+    const tipoMap: Record<string, string> = {
+      admin: 'administrador',
+      medico: 'medico',
+      enfermagem: 'Enfermagem',
+      recepcao: 'Recepção'
+    };
+
+  if (data.perfil.toLowerCase() !== formData.userType) {
+  alert("Tipo de usuário incorreto para este login");
+  return;
+}
+
+
+    // Login OK, redireciona
     navigate('/dashboard');
-  };
+  } catch (error) {
+    console.error(error);
+    alert('Erro ao conectar com o servidor');
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-hospital-light to-hospital-accent flex items-center justify-center p-4">
@@ -69,10 +108,11 @@ const Login = () => {
                   <SelectValue placeholder="Selecione o tipo de acesso" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="administrador">administrador</SelectItem>
                   <SelectItem value="medico">Médico</SelectItem>
                   <SelectItem value="enfermagem">Enfermagem</SelectItem>
-                  <SelectItem value="recepcao">Recepção</SelectItem>
+                  <SelectItem value="atendente">Recepção</SelectItem>
+                   <SelectItem value="gerente">Gerente</SelectItem>
                 </SelectContent>
               </Select>
             </div>

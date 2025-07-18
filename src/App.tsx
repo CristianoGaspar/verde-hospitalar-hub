@@ -29,7 +29,7 @@ import Encaminhamentos from "./pages/encaminhamentos/encaminhamentos";
 import Procedimentos from "./pages/procedimentos/procedimentos";
 import Cirurgias from "./pages/cirurgias/cirurgias";
 import Faturas from "./pages/faturas/faturas";
-
+import Users from "./pages/users/Users";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -90,6 +90,8 @@ const App = () => (
           {/* Faturas */}
           <Route path="/faturas" element={< Faturas />} />
 
+          {/* Users */}
+          <Route path="/users" element={<Users />} />
 
 
 

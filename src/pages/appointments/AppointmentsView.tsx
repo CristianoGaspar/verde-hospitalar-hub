@@ -2,11 +2,35 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Search, Plus, Download, FileText, Calendar, Clock, UserCheck, UserX, AlertCircle } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Download,
+  FileText,
+  Calendar,
+  Clock,
+  UserCheck,
+  UserX,
+  AlertCircle,
+} from "lucide-react";
+import HospitalLayout from "@/components/HospitalLayout";
 
 const AppointmentsView = () => {
   const [filters, setFilters] = useState({
@@ -15,14 +39,37 @@ const AppointmentsView = () => {
     dateFrom: "",
     dateTo: "",
     status: "",
-    insurance: ""
+    insurance: "",
   });
 
-  // Mock data
   const appointments = [
-    { id: 1, patient: "Ana Silva", doctor: "Dr. Maria Costa", date: "2024-01-15", time: "09:00", status: "Confirmada", insurance: "Unimed" },
-    { id: 2, patient: "João Santos", doctor: "Dr. Pedro Lima", date: "2024-01-15", time: "10:30", status: "Pendente", insurance: "Bradesco Saúde" },
-    { id: 3, patient: "Maria Oliveira", doctor: "Dr. Ana Torres", date: "2024-01-16", time: "14:00", status: "Realizada", insurance: "SulAmérica" },
+    {
+      id: 1,
+      patient: "Ana Silva",
+      doctor: "Dr. Maria Costa",
+      date: "2024-01-15",
+      time: "09:00",
+      status: "Confirmada",
+      insurance: "Unimed",
+    },
+    {
+      id: 2,
+      patient: "João Santos",
+      doctor: "Dr. Pedro Lima",
+      date: "2024-01-15",
+      time: "10:30",
+      status: "Pendente",
+      insurance: "Bradesco Saúde",
+    },
+    {
+      id: 3,
+      patient: "Maria Oliveira",
+      doctor: "Dr. Ana Torres",
+      date: "2024-01-16",
+      time: "14:00",
+      status: "Realizada",
+      insurance: "SulAmérica",
+    },
   ];
 
   const dashboardData = {
@@ -30,20 +77,24 @@ const AppointmentsView = () => {
     pending: 5,
     topDoctor: "Dr. Maria Costa (8)",
     frequentAbsent: 3,
-    avgDelay: "15 min"
+    avgDelay: "15 min",
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+    <HospitalLayout currentPage="agendamentos" onPageChange={() => {}}>
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-primary">Consultar Consultas Agendadas</h1>
-            <p className="text-muted-foreground">Gerencie e visualize agendamentos médicos</p>
+            <h1 className="text-3xl font-bold text-hospital-dark">
+              Consultar Consultas Agendadas
+            </h1>
+            <p className="text-muted-foreground">
+              Gerencie e visualize agendamentos médicos
+            </p>
           </div>
           <Link to="/appointments/register">
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button className="bg-hospital-primary hover:bg-hospital-dark">
               <Plus className="h-4 w-4 mr-2" />
               Nova Consulta
             </Button>
@@ -55,10 +106,12 @@ const AppointmentsView = () => {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Calendar className="h-8 w-8 text-primary" />
+                <Calendar className="h-8 w-8 text-hospital-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Total do Dia</p>
-                  <p className="text-2xl font-bold text-primary">{dashboardData.todayTotal}</p>
+                  <p className="text-2xl font-bold text-hospital-primary">
+                    {dashboardData.todayTotal}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -70,7 +123,9 @@ const AppointmentsView = () => {
                 <Clock className="h-8 w-8 text-yellow-600" />
                 <div>
                   <p className="text-sm text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold text-yellow-600">{dashboardData.pending}</p>
+                  <p className="text-2xl font-bold text-yellow-600">
+                    {dashboardData.pending}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -81,8 +136,12 @@ const AppointmentsView = () => {
               <div className="flex items-center space-x-2">
                 <UserCheck className="h-8 w-8 text-green-600" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Médico Destaque</p>
-                  <p className="text-sm font-bold text-green-600">{dashboardData.topDoctor}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Médico Destaque
+                  </p>
+                  <p className="text-sm font-bold text-green-600">
+                    {dashboardData.topDoctor}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -93,8 +152,12 @@ const AppointmentsView = () => {
               <div className="flex items-center space-x-2">
                 <UserX className="h-8 w-8 text-red-600" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Faltantes Recorrentes</p>
-                  <p className="text-2xl font-bold text-red-600">{dashboardData.frequentAbsent}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Faltantes Recorrentes
+                  </p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {dashboardData.frequentAbsent}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -106,7 +169,9 @@ const AppointmentsView = () => {
                 <AlertCircle className="h-8 w-8 text-orange-600" />
                 <div>
                   <p className="text-sm text-muted-foreground">Atraso Médio</p>
-                  <p className="text-2xl font-bold text-orange-600">{dashboardData.avgDelay}</p>
+                  <p className="text-2xl font-bold text-orange-600">
+                    {dashboardData.avgDelay}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -126,9 +191,16 @@ const AppointmentsView = () => {
               <Input
                 placeholder="Nome do paciente..."
                 value={filters.patient}
-                onChange={(e) => setFilters({...filters, patient: e.target.value})}
+                onChange={(e) =>
+                  setFilters({ ...filters, patient: e.target.value })
+                }
               />
-              <Select value={filters.doctor} onValueChange={(value) => setFilters({...filters, doctor: value})}>
+              <Select
+                value={filters.doctor}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, doctor: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Médico" />
                 </SelectTrigger>
@@ -140,17 +212,24 @@ const AppointmentsView = () => {
               </Select>
               <Input
                 type="date"
-                placeholder="Data inicial"
                 value={filters.dateFrom}
-                onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
+                onChange={(e) =>
+                  setFilters({ ...filters, dateFrom: e.target.value })
+                }
               />
               <Input
                 type="date"
-                placeholder="Data final"
                 value={filters.dateTo}
-                onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
+                onChange={(e) =>
+                  setFilters({ ...filters, dateTo: e.target.value })
+                }
               />
-              <Select value={filters.status} onValueChange={(value) => setFilters({...filters, status: value})}>
+              <Select
+                value={filters.status}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, status: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -161,7 +240,12 @@ const AppointmentsView = () => {
                   <SelectItem value="cancelada">Cancelada</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={filters.insurance} onValueChange={(value) => setFilters({...filters, insurance: value})}>
+              <Select
+                value={filters.insurance}
+                onValueChange={(value) =>
+                  setFilters({ ...filters, insurance: value })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Convênio" />
                 </SelectTrigger>
@@ -206,25 +290,38 @@ const AppointmentsView = () => {
               <TableBody>
                 {appointments.map((appointment) => (
                   <TableRow key={appointment.id}>
-                    <TableCell className="font-medium">{appointment.patient}</TableCell>
+                    <TableCell className="font-medium">
+                      {appointment.patient}
+                    </TableCell>
                     <TableCell>{appointment.doctor}</TableCell>
                     <TableCell>{appointment.date}</TableCell>
                     <TableCell>{appointment.time}</TableCell>
                     <TableCell>
-                      <Badge variant={
-                        appointment.status === "Confirmada" ? "default" :
-                        appointment.status === "Realizada" ? "default" :
-                        appointment.status === "Pendente" ? "secondary" : "destructive"
-                      }>
+                      <Badge
+                        variant={
+                          appointment.status === "Confirmada" ||
+                          appointment.status === "Realizada"
+                            ? "default"
+                            : appointment.status === "Pendente"
+                            ? "secondary"
+                            : "destructive"
+                        }
+                      >
                         {appointment.status}
                       </Badge>
                     </TableCell>
                     <TableCell>{appointment.insurance}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">Ver</Button>
-                        <Button variant="outline" size="sm">Editar</Button>
-                        <Button variant="destructive" size="sm">Excluir</Button>
+                        <Button variant="outline" size="sm">
+                          Ver
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          Editar
+                        </Button>
+                        <Button variant="destructive" size="sm">
+                          Excluir
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -234,7 +331,7 @@ const AppointmentsView = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </HospitalLayout>
   );
 };
 
