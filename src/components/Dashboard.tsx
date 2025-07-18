@@ -1,17 +1,6 @@
 
 import React from 'react';
-import { 
-  Activity, 
-  Users, 
-  Calendar, 
-  Clock, 
-  Bed, 
-  AlertCircle,
-  TrendingUp,
-  UserCheck,
-  FileText,
-  Stethoscope
-} from 'lucide-react';
+import {   Activity,   Users,   Calendar,   Clock,   Bed,   AlertCircle,  TrendingUp,  UserCheck,  FileText,  Stethoscope} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 

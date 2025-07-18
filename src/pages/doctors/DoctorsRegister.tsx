@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, UserPlus, Trash2, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
+import HospitalLayout from "@/components/HospitalLayout";
+import { createDoctor } from "@/services/doctors/createDoctor";
+import { getDoctors } from "@/services/doctors/getDoctors";
+import { useEffect, useState } from "react"; // 👈 já ajustado
+
 
 const doctorSchema = z.object({
   fullName: z.string().min(1, "Nome completo é obrigatório"),
@@ -51,6 +56,21 @@ export default function DoctorsRegister() {
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
   const { toast } = useToast();
 
+    //  NOVO: carregar médicos na montagem
+  useEffect(() => {
+    const loadDoctors = async () => {
+      try {
+        const data = await getDoctors();
+        setDoctors(data);
+      } catch (error) {
+        console.error("Erro ao carregar médicos:", error);
+        toast({ title: "Erro ao carregar médicos.", variant: "destructive" });
+      }
+    };
+
+    loadDoctors();
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -68,18 +88,16 @@ export default function DoctorsRegister() {
 
   const watchedShiftDays = watch("shiftDays");
 
-  const onSubmit = (data: DoctorForm) => {
-    if (editingDoctor) {
-      setDoctors(prev => prev.map(d => d.id === editingDoctor.id ? { ...data, id: editingDoctor.id } : d));
-      toast({ title: "Médico atualizado com sucesso!" });
-      setEditingDoctor(null);
-    } else {
-      const newDoctor: Doctor = { ...data, id: Date.now().toString() };
-      setDoctors(prev => [...prev, newDoctor]);
-      toast({ title: "Médico cadastrado com sucesso!" });
-    }
+const onSubmit = async (data: DoctorForm) => {
+  try {
+    await createDoctor(data);
+    toast({ title: "Médico cadastrado com sucesso!" });
     reset();
-  };
+  } catch (error) {
+    console.error("Erro ao cadastrar médico:", error);
+    toast({ title: "Erro ao cadastrar médico.", variant: "destructive" });
+  }
+};
 
   const handleEdit = (doctor: Doctor) => {
     setEditingDoctor(doctor);
@@ -108,26 +126,29 @@ export default function DoctorsRegister() {
   };
 
   const getDayLabels = (dayIds: string[]) => {
-    return dayIds.map(id => weekDays.find(d => d.id === id)?.label).filter(Boolean).join(", ");
+    return dayIds
+      .map(id => weekDays.find(d => d.id === id)?.label)
+      .filter(Boolean)
+      .join(", ");
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+       <HospitalLayout currentPage="medicos" onPageChange={() => {}}>
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
-          <Link to="/">
+          <Link to="/doctors">
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-primary">Cadastro de Médicos</h1>
+            <h1 className="text-3xl font-bold text-hospital-dark">Cadastro de Médicos</h1>
             <p className="text-muted-foreground">Gerencie os médicos do hospital</p>
           </div>
         </div>
 
-        {/* Form */}
+        {/* Formulário */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -139,28 +160,24 @@ export default function DoctorsRegister() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Nome Completo *</Label>
-                  <Input id="fullName" {...register("fullName")} />
+                  <Label>Nome Completo *</Label>
+                  <Input {...register("fullName")} />
                   {errors.fullName && <p className="text-destructive text-sm">{errors.fullName.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="crm">CRM *</Label>
-                  <Input id="crm" placeholder="CRM/SP 123456" {...register("crm")} />
+                  <Label>CRM *</Label>
+                  <Input placeholder="CRM/SP 123456" {...register("crm")} />
                   {errors.crm && <p className="text-destructive text-sm">{errors.crm.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="specialty">Especialidade *</Label>
+                  <Label>Especialidade *</Label>
                   <Select onValueChange={(value) => setValue("specialty", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a especialidade" />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Selecione a especialidade" /></SelectTrigger>
                     <SelectContent>
-                      {specialties.map((specialty) => (
-                        <SelectItem key={specialty} value={specialty}>
-                          {specialty}
-                        </SelectItem>
+                      {specialties.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -168,23 +185,21 @@ export default function DoctorsRegister() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-mail *</Label>
-                  <Input id="email" type="email" {...register("email")} />
+                  <Label>E-mail *</Label>
+                  <Input type="email" {...register("email")} />
                   {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone *</Label>
-                  <Input id="phone" {...register("phone")} />
+                  <Label>Telefone *</Label>
+                  <Input {...register("phone")} />
                   {errors.phone && <p className="text-destructive text-sm">{errors.phone.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="status">Status *</Label>
+                  <Label>Status *</Label>
                   <Select onValueChange={(value) => setValue("status", value as "active" | "inactive")}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o status" />
-                    </SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Selecione o status" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">Ativo</SelectItem>
                       <SelectItem value="inactive">Inativo</SelectItem>
@@ -194,18 +209,19 @@ export default function DoctorsRegister() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="entryTime">Horário de Entrada *</Label>
-                  <Input id="entryTime" type="time" {...register("entryTime")} />
+                  <Label>Horário de Entrada *</Label>
+                  <Input type="time" {...register("entryTime")} />
                   {errors.entryTime && <p className="text-destructive text-sm">{errors.entryTime.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="exitTime">Horário de Saída *</Label>
-                  <Input id="exitTime" type="time" {...register("exitTime")} />
+                  <Label>Horário de Saída *</Label>
+                  <Input type="time" {...register("exitTime")} />
                   {errors.exitTime && <p className="text-destructive text-sm">{errors.exitTime.message}</p>}
                 </div>
               </div>
 
+              {/* Dias de Plantão */}
               <div className="space-y-3">
                 <Label>Dias de Plantão *</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -224,7 +240,7 @@ export default function DoctorsRegister() {
               </div>
 
               <div className="flex gap-3">
-                <Button type="submit" className="bg-primary hover:bg-primary/90">
+                <Button type="submit" className="bg-hospital-primary hover:bg-hospital-dark">
                   {editingDoctor ? "Atualizar" : "Salvar"}
                 </Button>
                 <Button type="button" variant="outline" onClick={handleCancel}>
@@ -235,7 +251,7 @@ export default function DoctorsRegister() {
           </CardContent>
         </Card>
 
-        {/* Doctors List */}
+        {/* Tabela de médicos */}
         {doctors.length > 0 && (
           <Card>
             <CardHeader>
@@ -256,35 +272,19 @@ export default function DoctorsRegister() {
                 <TableBody>
                   {doctors.map((doctor) => (
                     <TableRow key={doctor.id}>
-                      <TableCell className="font-medium">{doctor.fullName}</TableCell>
+                      <TableCell>{doctor.fullName}</TableCell>
                       <TableCell>{doctor.crm}</TableCell>
                       <TableCell>{doctor.specialty}</TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          doctor.status === "active" 
-                            ? "bg-green-100 text-green-800" 
-                            : "bg-red-100 text-red-800"
-                        }`}>
+                        <span className={`px-2 py-1 rounded-full text-xs ${doctor.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
                           {doctor.status === "active" ? "Ativo" : "Inativo"}
                         </span>
                       </TableCell>
-                      <TableCell className="text-sm">{getDayLabels(doctor.shiftDays)}</TableCell>
+                      <TableCell>{getDayLabels(doctor.shiftDays)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleEdit(doctor)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleDelete(doctor.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <Button variant="outline" size="icon" onClick={() => handleEdit(doctor)}><Edit className="h-4 w-4" /></Button>
+                          <Button variant="outline" size="icon" onClick={() => handleDelete(doctor.id)}><Trash2 className="h-4 w-4" /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -295,6 +295,6 @@ export default function DoctorsRegister() {
           </Card>
         )}
       </div>
-    </div>
+    </HospitalLayout>
   );
 }
