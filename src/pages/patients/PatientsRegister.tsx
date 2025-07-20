@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import HospitalLayout from "@/components/HospitalLayout";
 
 
+
 const patientSchema = z.object({
   fullName: z.string().min(1, "Nome completo é obrigatório"),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato: 000.000.000-00"),
@@ -43,6 +44,7 @@ interface Patient extends PatientForm {
 
 const states = [ "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" ];
 const insurances = [ "Unimed", "Bradesco Saúde", "SulAmérica", "Amil", "NotreDame", "Particular" ];
+const { watch } = useForm<PatientForm>({ resolver: zodResolver(patientSchema) });
 
 export default function PatientsRegister() {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -122,77 +124,52 @@ export default function PatientsRegister() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+<form onSubmit={handleSubmit(onSubmit)}>
+  <div className="grid grid-cols-1 gap-4">
+    <div>
+      <Label>Nome</Label>
+      <Input {...register("fullName")} />
+      {errors.fullName && <p className="text-destructive text-sm">{errors.fullName.message}</p>}
+    </div>
+    <div>
+      <Label>Data de Nascimento</Label>
+      <Input type="date" {...register("birthDate")} />
+      {errors.birthDate && <p className="text-destructive text-sm">{errors.birthDate.message}</p>}
+    </div>
+    <div>
+      <Label>CPF</Label>
+      <Input {...register("cpf")} />
+      {errors.cpf && <p className="text-destructive text-sm">{errors.cpf.message}</p>}
+    </div>
+    <div>
+      <Label>Possui Convênio</Label>
+      <Select {...register("insurance")}>
+        <SelectTrigger>
+          <SelectValue>{watch("insurance")}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="sim">sim</SelectItem>
+          <SelectItem value="não">não</SelectItem>
+        </SelectContent>
+      </Select>
+      {errors.insurance && <p className="text-destructive text-sm">{errors.insurance.message}</p>}
+    </div>
+    <div>
+      <Label>Id do Convênio</Label>
+      <Input type="number" {...register("insuranceNumber")} />
+      {errors.insuranceNumber && <p className="text-destructive text-sm">{errors.insuranceNumber.message}</p>}
+    </div>
+  </div>
 
-              {/* Dados pessoais */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><Label>Nome Completo *</Label><Input {...register("fullName")} />{errors.fullName && <p className="text-destructive text-sm">{errors.fullName.message}</p>}</div>
-                <div><Label>CPF *</Label><Input {...register("cpf")} placeholder="000.000.000-00" />{errors.cpf && <p className="text-destructive text-sm">{errors.cpf.message}</p>}</div>
-                <div><Label>RG *</Label><Input {...register("rg")} />{errors.rg && <p className="text-destructive text-sm">{errors.rg.message}</p>}</div>
-                <div><Label>Data de Nascimento *</Label><Input type="date" {...register("birthDate")} />{errors.birthDate && <p className="text-destructive text-sm">{errors.birthDate.message}</p>}</div>
-                <div>
-                  <Label>Sexo *</Label>
-                  <Select onValueChange={value => setValue("gender", value as "male" | "female" | "other")}>
-                    <SelectTrigger><SelectValue placeholder="Selecione o sexo" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Masculino</SelectItem>
-                      <SelectItem value="female">Feminino</SelectItem>
-                      <SelectItem value="other">Outro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.gender && <p className="text-destructive text-sm">{errors.gender.message}</p>}
-                </div>
-                <div><Label>Telefone *</Label><Input {...register("phone")} />{errors.phone && <p className="text-destructive text-sm">{errors.phone.message}</p>}</div>
-                <div><Label>E-mail</Label><Input type="email" {...register("email")} />{errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}</div>
-              </div>
+  <div className="flex gap-3">
+    <Button type="submit" className="bg-hospital-primary hover:bg-hospital-dark">
+      {editingPatient ? "Atualizar" : "Salvar"}
+    </Button>
+    <Button type="button" variant="outline" onClick={handleCancel}>Cancelar</Button>
+  </div>
+</form>
 
-              {/* Endereço */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2"><Label>Endereço Completo *</Label><Input {...register("address")} />{errors.address && <p className="text-destructive text-sm">{errors.address.message}</p>}</div>
-                <div><Label>Cidade *</Label><Input {...register("city")} />{errors.city && <p className="text-destructive text-sm">{errors.city.message}</p>}</div>
-                <div>
-                  <Label>Estado *</Label>
-                  <Select onValueChange={value => setValue("state", value)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione o estado" /></SelectTrigger>
-                    <SelectContent>{states.map(uf => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}</SelectContent>
-                  </Select>
-                  {errors.state && <p className="text-destructive text-sm">{errors.state.message}</p>}
-                </div>
-                <div><Label>CEP *</Label><Input placeholder="00000-000" {...register("zipCode")} />{errors.zipCode && <p className="text-destructive text-sm">{errors.zipCode.message}</p>}</div>
-              </div>
 
-              {/* Contato de emergência */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><Label>Contato de Emergência *</Label><Input {...register("emergencyContact")} />{errors.emergencyContact && <p className="text-destructive text-sm">{errors.emergencyContact.message}</p>}</div>
-                <div><Label>Telefone de Emergência *</Label><Input {...register("emergencyPhone")} />{errors.emergencyPhone && <p className="text-destructive text-sm">{errors.emergencyPhone.message}</p>}</div>
-              </div>
-
-              {/* Convênio */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Convênio *</Label>
-                  <Select onValueChange={value => setValue("insurance", value)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione o convênio" /></SelectTrigger>
-                    <SelectContent>{insurances.map(i => <SelectItem key={i} value={i}>{i}</SelectItem>)}</SelectContent>
-                  </Select>
-                  {errors.insurance && <p className="text-destructive text-sm">{errors.insurance.message}</p>}
-                </div>
-                <div><Label>Número da Carteirinha</Label><Input {...register("insuranceNumber")} /></div>
-              </div>
-
-              {/* Informações médicas */}
-              <div className="grid grid-cols-1 gap-4">
-                <div><Label>Alergias</Label><Textarea {...register("allergies")} rows={2} /></div>
-                <div><Label>Histórico Médico</Label><Textarea {...register("medicalHistory")} rows={3} /></div>
-              </div>
-
-              <div className="flex gap-3">
-                <Button type="submit" className="bg-hospital-primary hover:bg-hospital-dark">
-                  {editingPatient ? "Atualizar" : "Salvar"}
-                </Button>
-                <Button type="button" variant="outline" onClick={handleCancel}>Cancelar</Button>
-              </div>
-            </form>
           </CardContent>
         </Card>
 
