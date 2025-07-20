@@ -1,11 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const doctorController = require('../controllers/doctorController');
+const doctorController = require("../controllers/doctorController");
 
-router.post('/doctors', doctorController.createDoctor);
-// Adicione rotas GET, PUT, DELETE aqui também
-
+//  Rota para listar todos os médicos
 router.get("/doctors", doctorController.getAllDoctors);
 
+//  Rota para criar um médico (sem repetir)
+router.post("/doctors", doctorController.createDoctor);
+
+//  Rota para contar médicos
+router.get("/doctors/quantity", doctorController.countDoctors);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
-const mysql = require('mysql2'); // ← você já está usando mysql2 (ok!)
 const cors = require('cors');
+const mysql = require('mysql2'); // ← você já está usando mysql2 (ok!)
+
 
 const app = express();
 app.use(cors());
