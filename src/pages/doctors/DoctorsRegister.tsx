@@ -15,11 +15,13 @@ import { Link } from "react-router-dom";
 import HospitalLayout from "@/components/HospitalLayout";
 import { createDoctor } from "@/services/doctors/createDoctor";
 import { getDoctors } from "@/services/doctors/getDoctors";
-import { useEffect, useState } from "react"; // 👈 já ajustado
+import { useEffect, useState } from "react"; // já ajustado
+import { useNavigate } from "react-router-dom";
+
 
 
 const doctorSchema = z.object({
-  fullName: z.string().min(1, "Nome completo é obrigatório"),
+  full_name: z.string().min(1, "Nome completo é obrigatório"),
   crm: z.string().regex(/^CRM\/[A-Z]{2}\s\d{4,6}$/, "CRM deve ter o formato: CRM/UF 000000"),
   specialty: z.string().min(1, "Especialidade é obrigatória"),
   email: z.string().email("Email inválido"),
@@ -55,8 +57,9 @@ export default function DoctorsRegister() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate()
 
-    //  NOVO: carregar médicos na montagem
+  //  NOVO: carregar médicos na montagem
   useEffect(() => {
     const loadDoctors = async () => {
       try {
@@ -88,16 +91,40 @@ export default function DoctorsRegister() {
 
   const watchedShiftDays = watch("shiftDays");
 
+  const [isSubmitting, setIsSubmitting] = useState(false); //cria o loading
+
 const onSubmit = async (data: DoctorForm) => {
+  setIsSubmitting(true);
+  console.log("📤 Enviando dados:", data);
+
   try {
-    await createDoctor(data);
+    const response = await createDoctor(data);
+    console.log("✅ Dados recebidos no frontend:", response);
+
     toast({ title: "Médico cadastrado com sucesso!" });
+
+    setEditingDoctor(null);
     reset();
-  } catch (error) {
-    console.error("Erro ao cadastrar médico:", error);
-    toast({ title: "Erro ao cadastrar médico.", variant: "destructive" });
+
+    setTimeout(() => {
+      navigate("/doctors");
+    }, 1500);
+  } catch (error: any) {
+    console.error("❌ Erro final no onSubmit:", error);
+    toast({
+      title: "Erro ao cadastrar médico.",
+      description: error?.message || "Erro desconhecido",
+      variant: "destructive",
+    });
+  } finally {
+    setIsSubmitting(false);
+    console.log("✅ Finalizado submit");
   }
 };
+
+
+
+
 
   const handleEdit = (doctor: Doctor) => {
     setEditingDoctor(doctor);
@@ -133,7 +160,7 @@ const onSubmit = async (data: DoctorForm) => {
   };
 
   return (
-       <HospitalLayout currentPage="medicos" onPageChange={() => {}}>
+    <HospitalLayout currentPage="medicos" onPageChange={() => { }}>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -161,8 +188,8 @@ const onSubmit = async (data: DoctorForm) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Nome Completo *</Label>
-                  <Input {...register("fullName")} />
-                  {errors.fullName && <p className="text-destructive text-sm">{errors.fullName.message}</p>}
+                  <Input {...register("full_name")} />
+                  {errors.full_name && <p className="text-destructive text-sm">{errors.full_name.message}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -272,7 +299,7 @@ const onSubmit = async (data: DoctorForm) => {
                 <TableBody>
                   {doctors.map((doctor) => (
                     <TableRow key={doctor.id}>
-                      <TableCell>{doctor.fullName}</TableCell>
+                      <TableCell>{doctor.full_name}</TableCell>
                       <TableCell>{doctor.crm}</TableCell>
                       <TableCell>{doctor.specialty}</TableCell>
                       <TableCell>
