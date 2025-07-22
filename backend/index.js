@@ -77,6 +77,9 @@ app.get('/usuarios', (req, res) => {
 const doctorRoutes = require('./routes/doctorRoutes');
 app.use('/api', doctorRoutes);
 
+const patientsRoutes = require('./routes/patientRoutes');
+app.use('/api', patientsRoutes);
+
 // Subir o servidor
 app.listen(3001, () => {
   console.log('Servidor backend rodando na porta 3001');

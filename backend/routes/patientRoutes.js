@@ -3,12 +3,12 @@ const router = express.Router();
 const patientController = require("../controllers/patientController");
 
 //  Rota para listar todos os médicos
-router.get("/clientes", doctorController.getAllClientes);
+router.get("/patients", patientController.getAllPatients);
 
 //  Rota para criar um médico (sem repetir)
-router.post("/clientes", doctorController.createCliente);
+router.post("/patients", patientController.createPatient);
 
 //  Rota para contar médicos
-router.get("/clientes/quantity", doctorController.countClientes);
+router.get("/patients/quantity", patientController.countPatients);
 
 module.exports = router;

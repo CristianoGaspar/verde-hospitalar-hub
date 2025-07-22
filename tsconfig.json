@@ -9,11 +9,18 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+
+    "allowJs": true,
+    "skipLibCheck": true,
     "noImplicitAny": false,
     "noUnusedParameters": false,
-    "skipLibCheck": true,
-    "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+
+    // 🔧 Adições para suportar módulos ES e JSX
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "jsx": "react-jsx"
   }
 }
