@@ -2,13 +2,13 @@ const db = require('../db/connection');
 
 
 
-exports.getAllClientes = async (req, res) => {
+exports.getAllPatients = async (req, res) => {
   try {
-    const [results] = await db.query("SELECT * FROM cliente");
+    const [results] = await db.query("SELECT c.id AS cliente_id, c.nome AS nome_cliente, c.convenio_id as conveio_id, c.data_nascimento, c.cpf as cpf, v.nome AS nome_convenio FROM clientes c LEFT JOIN convenios v ON c.convenio_id = v.id WHERE 1 order by nome_cliente asc;");
     
-    const formatted = results.map((cliente) => ({
-      ...cliente,
-      shiftDays: JSON.parse(cliente.shiftDays || "[]")
+    const formatted = results.map((patient) => ({
+      ...patient,
+      shiftDays: JSON.parse(patient.shiftDays || "[]")
     }));
 
     res.json(formatted);
@@ -18,7 +18,7 @@ exports.getAllClientes = async (req, res) => {
   }
 };
 
-exports.countClientes = async (req, res) => {
+exports.countPatients = async (req, res) => {
   try {
     const [result] = await db.query("SELECT count(*) AS total FROM clientes");
     console.log("Resultado da query:", result);
@@ -30,7 +30,7 @@ exports.countClientes = async (req, res) => {
 };
 
 
-exports.createCliente = (req, res) => {
+exports.createPatient = (req, res) => {
   const {
   id,
   nome,
@@ -41,7 +41,7 @@ exports.createCliente = (req, res) => {
   } = req.body;
 
   const query = `
-    INSERT INTO cliente 
+    INSERT INTO clientes 
     (id,  nome,  data_nascimento,  cpf,  possui_convenio,  convenio_id)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
