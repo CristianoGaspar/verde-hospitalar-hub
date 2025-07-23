@@ -63,11 +63,11 @@ exports.createDoctor = (req, res) => {
 
   db.query(query, values, (err, result) => {
     if (err) {
-      console.error("❌ ERRO AO INSERIR NO BANCO:", err); // ← esse log é chave
+      console.error("ERRO AO INSERIR NO BANCO:", err); // ← esse log é chave
       return res.status(500).json({ error: "Erro ao cadastrar médico" });
     }
 
-    console.log("✅ Médico inserido com ID:", result.insertId);
+    console.log("Médico inserido com ID:", result.insertId);
     return res.status(201).json({
       id: result.insertId,
       message: "Médico cadastrado com sucesso",

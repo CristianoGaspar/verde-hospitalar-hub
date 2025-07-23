@@ -68,3 +68,28 @@ exports.createPatient = (req, res) => {
     });
   });
 };
+
+//lista o cliente selecionado e o convenio vinculado
+// 🔄 Corrigido aqui:
+exports.getInsuranceByPatientId = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [rows] = await db.query(
+      `SELECT convenios.id, convenios.nome
+       FROM clientes
+       INNER JOIN convenios ON clientes.convenio_id = convenios.id
+       WHERE clientes.id = ?`,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Convênio não encontrado para o cliente" });
+    }
+
+    res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error("Erro ao buscar convênio:", error);
+    res.status(500).json({ error: "Erro interno do servidor" });
+  }
+};

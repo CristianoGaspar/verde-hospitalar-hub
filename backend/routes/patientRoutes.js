@@ -11,4 +11,9 @@ router.post("/patients", patientController.createPatient);
 //  Rota para contar médicos
 router.get("/patients/quantity", patientController.countPatients);
 
+router.get("/patients/:id/insurance", patientController.getInsuranceByPatientId);
+
+
+
+
 module.exports = router;
