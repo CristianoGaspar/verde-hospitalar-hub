@@ -22,6 +22,7 @@ import { createAppointment } from "@/services/appointments/createAppointment";
 import { getInsuranceByPatientId } from "@/services/patients/getInsuranceByPatientId";
 import { getInsurances } from "@/services/appointments/getInsurances";
 //import { getInsuranceByPatientId } from "@/services/patientService"; // ajuste o path
+import { useNavigate } from "react-router-dom";
 
 const appointmentSchema = z.object({
   patientName: z.string().min(1, "Nome do paciente é obrigatório"),
@@ -126,6 +127,8 @@ export default function AppointmentsRegister() {
     },
   });
 
+   const navigate = useNavigate(); // INSTÂNCIA
+
   const onSubmit = async (data: AppointmentForm) => {
     try {
       if (!selectedPatientId) {
@@ -150,10 +153,15 @@ export default function AppointmentsRegister() {
         observacoes: data.observations || null,
       });
 
-      toast({ title: "Consulta salva com sucesso!" });
+      toast({ title: "Agendamento salvo com sucesso!",variant: "success" });
       reset();
       setSelectedPatientId(null);
       setSelectedDoctorId(null);
+
+      setTimeout(() => {
+      navigate("/dashboard");
+    }, 4000); // tempo pra deixar o toast aparecer
+
     } catch (error) {
       console.error("Erro ao salvar consulta:", error);
       toast({ title: "Erro ao salvar consulta", variant: "destructive" });
@@ -223,8 +231,9 @@ export default function AppointmentsRegister() {
                   <Label htmlFor="patientName">Paciente *</Label>
                   <Select
                     onValueChange={(value) => {
-                      const selected = patients.find(p => p.nome_cliente === value);
-                      setSelectedPatientId(selected?.id ?? null);
+                      const selected = patients.find(p => p.cliente_id === Number(value));
+setSelectedPatientId(selected?.cliente_id ?? null);
+
 
                       //setSelectedPatientId(id);
                       setValue("patientName", value);
@@ -237,10 +246,11 @@ export default function AppointmentsRegister() {
                     </SelectTrigger>
                     <SelectContent>
                       {patients.map((patient) => (
-                        <SelectItem key={patient.id} value={patient.nome_cliente}>
-                          {patient.nome_cliente}
-                        </SelectItem>
-                      ))}
+  <SelectItem key={patient.cliente_id} value={patient.cliente_id.toString()}>
+    {patient.nome_cliente}
+  </SelectItem>
+))}
+
                     </SelectContent>
                   </Select>
                   {errors.patientName && <p className="text-destructive text-sm">{errors.patientName.message}</p>}
