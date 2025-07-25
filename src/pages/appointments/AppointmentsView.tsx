@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,8 @@ import {
 } from "lucide-react";
 import HospitalLayout from "@/components/HospitalLayout";
 
+import { getConsultasAgendadas } from "@/services/appointments/getConsultasAgendadas";
+
 const AppointmentsView = () => {
   const [filters, setFilters] = useState({
     patient: "",
@@ -42,35 +44,20 @@ const AppointmentsView = () => {
     insurance: "",
   });
 
-  const appointments = [
-    {
-      id: 1,
-      patient: "Ana Silva",
-      doctor: "Dr. Maria Costa",
-      date: "2024-01-15",
-      time: "09:00",
-      status: "Confirmada",
-      insurance: "Unimed",
-    },
-    {
-      id: 2,
-      patient: "João Santos",
-      doctor: "Dr. Pedro Lima",
-      date: "2024-01-15",
-      time: "10:30",
-      status: "Pendente",
-      insurance: "Bradesco Saúde",
-    },
-    {
-      id: 3,
-      patient: "Maria Oliveira",
-      doctor: "Dr. Ana Torres",
-      date: "2024-01-16",
-      time: "14:00",
-      status: "Realizada",
-      insurance: "SulAmérica",
-    },
-  ];
+  const [appointments, setAppointments] = useState([]);
+
+  useEffect(() => {
+    const fetchConsultas = async () => {
+      try {
+        const data = await getConsultasAgendadas();
+        setAppointments(data);
+      } catch (error) {
+        console.error("Erro ao buscar consultas agendadas:", error);
+      }
+    };
+
+    fetchConsultas();
+  }, []);
 
   const dashboardData = {
     todayTotal: 28,
@@ -136,9 +123,7 @@ const AppointmentsView = () => {
               <div className="flex items-center space-x-2">
                 <UserCheck className="h-8 w-8 text-green-600" />
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    Médico Destaque
-                  </p>
+                  <p className="text-sm text-muted-foreground">Médico Destaque</p>
                   <p className="text-sm font-bold text-green-600">
                     {dashboardData.topDoctor}
                   </p>
@@ -289,28 +274,47 @@ const AppointmentsView = () => {
               </TableHeader>
               <TableBody>
                 {appointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
+                  <TableRow key={appointment.consulta_id}>
                     <TableCell className="font-medium">
-                      {appointment.patient}
+                      {appointment.nome_cliente}
                     </TableCell>
-                    <TableCell>{appointment.doctor}</TableCell>
-                    <TableCell>{appointment.date}</TableCell>
-                    <TableCell>{appointment.time}</TableCell>
+                    <TableCell>{appointment.nome_medico}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          appointment.status === "Confirmada" ||
-                          appointment.status === "Realizada"
-                            ? "default"
-                            : appointment.status === "Pendente"
-                            ? "secondary"
-                            : "destructive"
-                        }
-                      >
-                        {appointment.status}
-                      </Badge>
+                      {new Date(appointment.data_agendada).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>{appointment.insurance}</TableCell>
+                    <TableCell>
+                      {new Date(appointment.data_agendada).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </TableCell>
+                    <TableCell>
+                     <Badge
+  className={
+    appointment.status === "scheduled"
+      ? "bg-blue-500 text-white"
+      : appointment.status === "confirmed"
+      ? "bg-orange-500 text-white"
+      : appointment.status === "completed"
+      ? "bg-green-500 text-white"
+      : appointment.status === "cancelled"
+      ? "bg-red-500 text-white"
+      : ""
+  }
+>
+  {appointment.status === "scheduled"
+    ? "Agendada"
+    : appointment.status === "confirmed"
+    ? "Confirmada"
+    : appointment.status === "completed"
+    ? "Realizada"
+    : appointment.status === "cancelled"
+    ? "Cancelada"
+    : appointment.status}
+</Badge>
+
+                    </TableCell>
+                    <TableCell>{appointment.nome_convenio || "-"}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm">

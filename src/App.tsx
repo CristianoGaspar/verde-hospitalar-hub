@@ -10,6 +10,8 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import DoctorsRegister from "./pages/doctors/DoctorsRegister";
 import DoctorsView from "./pages/doctors/DoctorsView";
+import ProcessDoctorsView from "./pages/doctors/ProcessDoctorsView";
+
 import AppointmentsRegister from "./pages/appointments/AppointmentsRegister";
 import AppointmentsView from "./pages/appointments/AppointmentsView";
 import InsuranceRegister from "./pages/insurance/InsuranceRegister";
@@ -49,6 +51,7 @@ const App = () => (
 
           <Route path="/doctors" element={<DoctorsView />} />
           <Route path="/doctors/register" element={<DoctorsRegister />} />
+          <Route path="/doctors/process" element={<ProcessDoctorsView />} />
 
           <Route path="/appointments" element={<AppointmentsView />} />
           <Route path="/appointments/register" element={<AppointmentsRegister />} />

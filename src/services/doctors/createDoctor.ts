@@ -15,3 +15,9 @@ export const createDoctor = async (data: any) => {
     throw error;
   }
 };
+
+export const createProcedureRequest = async (data: any) => {
+  console.log("🔼 Enviando payload para backend:", data);
+  const response = await http.post("/procedures", data); // <-- aqui tem que ser /procedures
+  return response.data;
+};

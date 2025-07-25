@@ -225,121 +225,121 @@ export default function AppointmentsRegister() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Paciente */}
-                <div className="space-y-2">
-                  <Label htmlFor="patientName">Paciente *</Label>
-                  <Select
-                    onValueChange={(value) => {
-                      const selected = patients.find(p => p.cliente_id === Number(value));
-setSelectedPatientId(selected?.cliente_id ?? null);
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Paciente */}
+                  <div className="space-y-2">
+                    <Label htmlFor="patientName">Paciente *</Label>
+                    <Select
+                      onValueChange={(value) => {
+                        const selected = patients.find(p => p.cliente_id === Number(value));
+  setSelectedPatientId(selected?.cliente_id ?? null);
 
 
-                      //setSelectedPatientId(id);
-                      setValue("patientName", value);
+                        //setSelectedPatientId(id);
+                        setValue("patientName", value);
 
-                      //console.log("Paciente selecionado:", value, "| ID:", id); // <-- agora funciona
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o paciente" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {patients.map((patient) => (
-  <SelectItem key={patient.cliente_id} value={patient.cliente_id.toString()}>
-    {patient.nome_cliente}
-  </SelectItem>
-))}
+                        //console.log("Paciente selecionado:", value, "| ID:", id); // <-- agora funciona
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o paciente" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {patients.map((patient) => (
+    <SelectItem key={patient.cliente_id} value={patient.cliente_id.toString()}>
+      {patient.nome_cliente}
+    </SelectItem>
+  ))}
 
-                    </SelectContent>
-                  </Select>
-                  {errors.patientName && <p className="text-destructive text-sm">{errors.patientName.message}</p>}
+                      </SelectContent>
+                    </Select>
+                    {errors.patientName && <p className="text-destructive text-sm">{errors.patientName.message}</p>}
+                  </div>
+
+                  {/* Médico */}
+                  <div className="space-y-2">
+                    <Label htmlFor="doctorName">Médico *</Label>
+                    <Select
+                      onValueChange={(value) => {
+                        const doctor = doctors.find(d => d.full_name === value);
+                        setSelectedDoctorId(doctor?.id ?? null);
+                        setValue("doctorName", value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o médico" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {doctors.map((doctor) => (
+                          <SelectItem key={doctor.id} value={doctor.full_name}>
+                            {doctor.full_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.doctorName && <p className="text-destructive text-sm">{errors.doctorName.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Data da Consulta *</Label>
+                    <Input id="date" type="date" {...register("date")} />
+                    {errors.date && <p className="text-destructive text-sm">{errors.date.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="time">Horário *</Label>
+                    <Input id="time" type="time" {...register("time")} />
+                    {errors.time && <p className="text-destructive text-sm">{errors.time.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="insurance">Convênio *</Label>
+                    <Select onValueChange={(value) => setValue("insurance", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o convênio" />
+                      </SelectTrigger>
+                      <SelectContent>
+    {insurances.map((insurance) => (
+    <SelectItem key={`conv-${insurance.id}`} value={insurance.nome}>
+      {insurance.nome}
+    </SelectItem>
+  ))}
+
+                      </SelectContent>
+                    </Select>
+                    {errors.insurance && (
+                      <p className="text-destructive text-sm">{errors.insurance.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="consultationType">Tipo de Consulta *</Label>
+                    <Select onValueChange={(value) => setValue("consultationType", value as any)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {consultationTypes.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Status *</Label>
+                    <Select onValueChange={(value) => setValue("status", value as any)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {statusOptions.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-
-                {/* Médico */}
-                <div className="space-y-2">
-                  <Label htmlFor="doctorName">Médico *</Label>
-                  <Select
-                    onValueChange={(value) => {
-                      const doctor = doctors.find(d => d.full_name === value);
-                      setSelectedDoctorId(doctor?.id ?? null);
-                      setValue("doctorName", value);
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o médico" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {doctors.map((doctor) => (
-                        <SelectItem key={doctor.id} value={doctor.full_name}>
-                          {doctor.full_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.doctorName && <p className="text-destructive text-sm">{errors.doctorName.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="date">Data da Consulta *</Label>
-                  <Input id="date" type="date" {...register("date")} />
-                  {errors.date && <p className="text-destructive text-sm">{errors.date.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="time">Horário *</Label>
-                  <Input id="time" type="time" {...register("time")} />
-                  {errors.time && <p className="text-destructive text-sm">{errors.time.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="insurance">Convênio *</Label>
-                  <Select onValueChange={(value) => setValue("insurance", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o convênio" />
-                    </SelectTrigger>
-                    <SelectContent>
-   {insurances.map((insurance) => (
-  <SelectItem key={`conv-${insurance.id}`} value={insurance.nome}>
-    {insurance.nome}
-  </SelectItem>
-))}
-
-                    </SelectContent>
-                  </Select>
-                  {errors.insurance && (
-                    <p className="text-destructive text-sm">{errors.insurance.message}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="consultationType">Tipo de Consulta *</Label>
-                  <Select onValueChange={(value) => setValue("consultationType", value as any)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {consultationTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status *</Label>
-                  <Select onValueChange={(value) => setValue("status", value as any)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusOptions.map((status) => (
-                        <SelectItem key={status.value} value={status.value}>{status.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="observations">Observações</Label>

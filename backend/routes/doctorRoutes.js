@@ -11,4 +11,14 @@ router.post("/doctors", doctorController.createDoctor);
 //  Rota para contar médicos
 router.get("/doctors/quantity", doctorController.countDoctors);
 
+router.post("/doctors/procedimento", doctorController.createProcedure);
+
+router.post("/doctors/prescriptions", doctorController.createPrescription);
+
+router.post("/doctors/reconsultas", doctorController.createReconsulta);
+
+
+
+
+
 module.exports = router;

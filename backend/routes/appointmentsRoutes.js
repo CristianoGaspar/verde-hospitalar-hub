@@ -8,5 +8,7 @@ router.post("/", appointmentsController.createAppointment);
 router.get("/insurances", appointmentsController.getInsurances);
 
 
+// Rota para pegar consultas agendadas (data > hoje + 3)
+router.get("/consultas-agendadas", appointmentsController.getConsultasAgendadas);
 
 module.exports = router;

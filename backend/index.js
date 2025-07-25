@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2'); // ← você já está usando mysql2 (ok!)
+const app = express();            //  cria o app primeiro
+app.use(cors());                  //  só depois aplica o cors
+const mysql = require('mysql2');
 
-
-const app = express();
-app.use(cors());
 app.use(express.json());
+
+// resto do código...
+
 
 const db = mysql.createConnection({
   host: 'localhost',
