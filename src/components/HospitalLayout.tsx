@@ -1,30 +1,11 @@
 import React, { useState } from 'react';
 import { DollarSign, FolderOpen } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  Home,
-  UserCheck,
-  Users,
-  Calendar,
-  Clock,
-  UserCog,
-  Menu,
-  X,
-  Activity,
-  Bed,
-  Stethoscope,
-  FileText,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react';
+import {  Home,  UserCheck,  Users,  Calendar,  Clock,  UserCog,  Menu,  X,  Activity,  Bed,  Stethoscope,  FileText,  ChevronDown,  ChevronUp} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface HospitalLayoutProps {
-  children: React.ReactNode;
-  currentPage: string;
-  onPageChange: (page: string) => void;
-}
+interface HospitalLayoutProps {  children: React.ReactNode;  currentPage: string;  onPageChange: (page: string) => void;}
 
 const menuItems = [
   { id: 'dashboard', label: 'Dashboard', icon: Home, emoji: '🏥', path: '/dashboard' },
@@ -47,7 +28,13 @@ const subMenus = {
     { label: 'Consultar Médicos', path: '/doctors' },
     { label: 'Requisições Médicas', path: '/doctors/process' },
   ],
+    faturas: [
+    { label: 'Faturas', path: '/faturas' },
+    { label: 'Faturamento Mensal', path: '/faturamento' },
+  ],
 };
+
+
 
 export default function HospitalLayout({ children, currentPage, onPageChange }: HospitalLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -93,7 +80,45 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
                 const Icon = item.icon;
 
                 // Submenu especial para Médicos
-                if (item.id === 'medicos') {
+                if (item.id === 'faturas') {
+                  const isOpen = openSubmenu === 'faturas';
+                  return (
+                    <li key={item.id}>
+                      <button
+                        onClick={() => handleToggleSubmenu(item.id)}
+                        className={cn(
+                          "w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 hover:bg-hospital-secondary",
+                          isOpen ? "bg-hospital-primary text-white shadow-md" : "text-hospital-dark hover:text-hospital-primary"
+                        )}
+                      >
+                        <span className="text-lg" role="img" aria-label={item.label}>{item.emoji}</span>
+                        <Icon className="h-5 w-5" />
+                        <span className="font-medium">Faturas</span>
+                        {isOpen ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
+                      </button>
+                      {isOpen && (
+                        <ul className="ml-8 mt-2 space-y-1">
+                          {subMenus.faturas.map((sub) => (
+                            <li key={sub.path}>
+                              <Link
+                                to={sub.path}
+                                onClick={() => setSidebarOpen(false)}
+                                className={cn(
+                                  "block px-3 py-2 text-sm rounded hover:bg-hospital-secondary",
+                                  location.pathname === sub.path ? "bg-hospital-primary text-white" : "text-hospital-dark"
+                                )}
+                              >
+                                {sub.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                }
+
+                                if (item.id === 'medicos') {
                   const isOpen = openSubmenu === 'medicos';
                   return (
                     <li key={item.id}>
