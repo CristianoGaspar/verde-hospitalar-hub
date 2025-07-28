@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,12 @@ import {
 } from "lucide-react";
 import HospitalLayout from "@/components/HospitalLayout";
 
+import { getConsultasAgendadas } from "@/services/appointments/getConsultasAgendadas";
+import { getPendingAppointmentsCount } from "@/services/appointments/getPendingCount";
+import { getAppointmentsConfirmed } from "@/services/appointments/getPendingCount";
+import { getAppointmentsCancelled } from "@/services/appointments/getPendingCount";
+
+
 const AppointmentsView = () => {
   const [filters, setFilters] = useState({
     patient: "",
@@ -42,46 +48,73 @@ const AppointmentsView = () => {
     insurance: "",
   });
 
-  const appointments = [
-    {
-      id: 1,
-      patient: "Ana Silva",
-      doctor: "Dr. Maria Costa",
-      date: "2024-01-15",
-      time: "09:00",
-      status: "Confirmada",
-      insurance: "Unimed",
-    },
-    {
-      id: 2,
-      patient: "João Santos",
-      doctor: "Dr. Pedro Lima",
-      date: "2024-01-15",
-      time: "10:30",
-      status: "Pendente",
-      insurance: "Bradesco Saúde",
-    },
-    {
-      id: 3,
-      patient: "Maria Oliveira",
-      doctor: "Dr. Ana Torres",
-      date: "2024-01-16",
-      time: "14:00",
-      status: "Realizada",
-      insurance: "SulAmérica",
-    },
-  ];
+  const [appointments, setAppointments] = useState([]);
+  const [todayTotal, setTodayTotal] = useState<number>(0);
+   const [todayConfirmed, setTodayConfirmed] = useState<number>(0);
+   const [todayCancelled, setTodayCancelled] = useState<number>(0);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const total = await getPendingAppointmentsCount();
+        setTodayTotal(total);
+      } catch (err) {
+        console.error("Erro ao buscar total de consultas pendentes:", err);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+    useEffect(() => {
+    async function fetchData() {
+      try {
+        const total = await getAppointmentsConfirmed();
+        setTodayConfirmed(total);
+      } catch (err) {
+        console.error("Erro ao buscar total de consultas pendentes:", err);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+      useEffect(() => {
+    async function fetchData() {
+      try {
+        const total = await getAppointmentsCancelled();
+        setTodayCancelled(total);
+      } catch (err) {
+        console.error("Erro ao buscar total de consultas pendentes:", err);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchConsultas = async () => {
+      try {
+        const data = await getConsultasAgendadas();
+        setAppointments(data);
+      } catch (error) {
+        console.error("Erro ao buscar consultas agendadas:", error);
+      }
+    };
+
+    fetchConsultas();
+  }, []);
 
   const dashboardData = {
-    todayTotal: 28,
-    pending: 5,
+    todayTotal,
+    todayConfirmed,
     topDoctor: "Dr. Maria Costa (8)",
-    frequentAbsent: 3,
+    todayCancelled,
     avgDelay: "15 min",
   };
 
   return (
-    <HospitalLayout currentPage="agendamentos" onPageChange={() => {}}>
+    <HospitalLayout currentPage="agendamentos" onPageChange={() => { }}>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -122,9 +155,9 @@ const AppointmentsView = () => {
               <div className="flex items-center space-x-2">
                 <Clock className="h-8 w-8 text-yellow-600" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Pendentes</p>
+                  <p className="text-sm text-muted-foreground">Pendentes à Confirmar</p>
                   <p className="text-2xl font-bold text-yellow-600">
-                    {dashboardData.pending}
+                    {dashboardData.todayConfirmed}
                   </p>
                 </div>
               </div>
@@ -136,11 +169,9 @@ const AppointmentsView = () => {
               <div className="flex items-center space-x-2">
                 <UserCheck className="h-8 w-8 text-green-600" />
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    Médico Destaque
-                  </p>
+                  <p className="text-sm text-muted-foreground">Médico Destaque</p>
                   <p className="text-sm font-bold text-green-600">
-                    {dashboardData.topDoctor}
+                    {dashboardData.todayCancelled}
                   </p>
                 </div>
               </div>
@@ -153,10 +184,10 @@ const AppointmentsView = () => {
                 <UserX className="h-8 w-8 text-red-600" />
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    Faltantes Recorrentes
+                    Canceladas - Tentar contato
                   </p>
                   <p className="text-2xl font-bold text-red-600">
-                    {dashboardData.frequentAbsent}
+                    {dashboardData.todayCancelled}
                   </p>
                 </div>
               </div>
@@ -289,36 +320,61 @@ const AppointmentsView = () => {
               </TableHeader>
               <TableBody>
                 {appointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
+                  <TableRow key={appointment.consulta_id}>
                     <TableCell className="font-medium">
-                      {appointment.patient}
+                      {appointment.nome_cliente}
                     </TableCell>
-                    <TableCell>{appointment.doctor}</TableCell>
-                    <TableCell>{appointment.date}</TableCell>
-                    <TableCell>{appointment.time}</TableCell>
+                    <TableCell>{appointment.nome_medico}</TableCell>
+                    <TableCell>
+                      {new Date(appointment.data_agendada).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(appointment.data_agendada).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </TableCell>
                     <TableCell>
                       <Badge
-                        variant={
-                          appointment.status === "Confirmada" ||
-                          appointment.status === "Realizada"
-                            ? "default"
-                            : appointment.status === "Pendente"
-                            ? "secondary"
-                            : "destructive"
+                        className={
+                          appointment.status === "agendada"
+                            ? "bg-blue-500 text-white"
+                            : appointment.status === "confirmada"
+                              ? "bg-green-600 text-white"
+                              : appointment.status === "cancelada"
+                                ? "bg-red-600 text-white"
+                                : "bg-gray-500 text-white"
                         }
                       >
-                        {appointment.status}
+                        {appointment.status === "scheduled"
+                          ? "Agendada"
+                          : appointment.status === "confirmed"
+                            ? "Confirmada"
+                            : appointment.status === "completed"
+                              ? "Realizada"
+                              : appointment.status === "cancelled"
+                                ? "Cancelada"
+                                : appointment.status}
                       </Badge>
+
                     </TableCell>
-                    <TableCell>{appointment.insurance}</TableCell>
+                    <TableCell>
+                      <div className="flex justify-center">
+                        {appointment.nome_convenio ? (
+                          <Badge className="bg-muted text-black px-4 min-w-[100px] justify-center">{appointment.nome_convenio}</Badge>
+                        ) : (
+                          <Badge className="bg-yellow-300 text-yellow-12800 center">   SUS   </Badge>
+                        )}</div></TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm">
                           Ver
                         </Button>
+                        <Link to={`/appointments/edit/${appointment.consulta_id}`}>
                         <Button variant="outline" size="sm">
                           Editar
                         </Button>
+                        </Link>
                         <Button variant="destructive" size="sm">
                           Excluir
                         </Button>

@@ -10,8 +10,13 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import DoctorsRegister from "./pages/doctors/DoctorsRegister";
 import DoctorsView from "./pages/doctors/DoctorsView";
+import ProcessDoctorsView from "./pages/doctors/ProcessDoctorsView";
+
 import AppointmentsRegister from "./pages/appointments/AppointmentsRegister";
 import AppointmentsView from "./pages/appointments/AppointmentsView";
+import GerenciarConsultaView from "./pages/appointments/EditAppointmentView";
+
+
 import InsuranceRegister from "./pages/insurance/InsuranceRegister";
 import InsuranceView from "./pages/insurance/InsuranceView";
 import MedicationsRegister from "./pages/medications/MedicationsRegister";
@@ -31,6 +36,9 @@ import Encaminhamentos from "./pages/encaminhamentos/encaminhamentos";
 import Procedimentos from "./pages/procedimentos/procedimentos";
 import Cirurgias from "./pages/cirurgias/cirurgias";
 import Faturas from "./pages/faturas/faturas";
+import FaturamentoView from "@/pages/faturas/FaturamentoView";
+
+
 import Users from "./pages/users/Users";
 
 const queryClient = new QueryClient();
@@ -49,9 +57,12 @@ const App = () => (
 
           <Route path="/doctors" element={<DoctorsView />} />
           <Route path="/doctors/register" element={<DoctorsRegister />} />
+          <Route path="/doctors/process" element={<ProcessDoctorsView />} />
 
           <Route path="/appointments" element={<AppointmentsView />} />
           <Route path="/appointments/register" element={<AppointmentsRegister />} />
+          <Route path="/appointments/edit/:id" element={<GerenciarConsultaView />} />
+
 
           <Route path="/insurance" element={<InsuranceView />} />
           <Route path="/insurance/register" element={<InsuranceRegister />} />
@@ -75,6 +86,8 @@ const App = () => (
           <Route path="/procedimentos" element={<Procedimentos />} />
           <Route path="/cirurgias" element={<Cirurgias />} />
           <Route path="/faturas" element={<Faturas />} />
+          <Route path="/faturamento" element={<FaturamentoView />} />
+
           <Route path="/users" element={<Users />} />
 
           <Route path="*" element={<NotFound />} />
