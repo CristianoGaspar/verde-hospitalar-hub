@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,26 +12,58 @@ import Calendar from '@/components/ui/CalendarIcon';
 import Users from '@/components/ui/UsersIcon';
 import HospitalLayout from "@/components/HospitalLayout";
 import { HeartPulse, Activity, Edit, Trash2, Plus, Search, Filter } from "lucide-react";
-import { getAllProcedimentos } from '@/services/procedimentos/getProcedimentos';
 
 const Procedimentos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [procedures, setProcedures] = useState([]);
 
-  useEffect(() => {
-    const fetchProcedures = async () => {
-      try {
-        const data = await getAllProcedimentos();
-        setProcedures(data);
-      } catch (error) {
-        console.error("Erro ao carregar procedimentos:", error);
-      }
-    };
-
-    fetchProcedures();
-  }, []);
+  const procedures = [
+    {
+      id: "PROC001",
+      name: "Apendicectomia",
+      type: "Cirurgia",
+      category: "Cirurgia Geral",
+      code: "40.19",
+      description: "Remoção cirúrgica do apêndice vermiforme",
+      complexity: "Baixa",
+      estimatedTime: "60 min",
+      status: "Ativo"
+    },
+    {
+      id: "PROC002",
+      name: "Colecistectomia Laparoscópica",
+      type: "Cirurgia",
+      category: "Cirurgia Geral",
+      code: "51.23",
+      description: "Remoção da vesícula biliar por via laparoscópica",
+      complexity: "Média",
+      estimatedTime: "90 min",
+      status: "Ativo"
+    },
+    {
+      id: "PROC003",
+      name: "Hernioplastia Inguinal",
+      type: "Cirurgia",
+      category: "Cirurgia Geral",
+      code: "53.05",
+      description: "Correição cirúrgica de hérnia inguinal",
+      complexity: "Baixa",
+      estimatedTime: "75 min",
+      status: "Ativo"
+    },
+    {
+      id: "PROC004",
+      name: "Consulta Cardiológica",
+      type: "Consulta",
+      category: "Cardiologia",
+      code: "03.01.01",
+      description: "Consulta médica especializada em cardiologia",
+      complexity: "Baixa",
+      estimatedTime: "30 min",
+      status: "Ativo"
+    }
+  ];
 
   const getComplexityColor = (complexity: string) => {
     switch (complexity) {
@@ -47,14 +79,14 @@ const Procedimentos = () => {
   };
 
   const getTypeIcon = (type: string) => {
-    return type === "cirurgia" ? Activity : HeartPulse;
+    return type === "Cirurgia" ? Activity : HeartPulse;
   };
 
-  const filteredProcedures = procedures.filter((procedure: any) => {
+  const filteredProcedures = procedures.filter((procedure) => {
     const matchesSearch =
-      procedure.nome_procedimento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      procedure.procedimento_codigo.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || procedure.tipo === filterType;
+      procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      procedure.code.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" || procedure.type === filterType;
     return matchesSearch && matchesType;
   });
 
@@ -95,9 +127,9 @@ const Procedimentos = () => {
                         <SelectValue placeholder="Selecionar tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cirurgia">Cirurgia</SelectItem>
-                        <SelectItem value="consulta">Consulta</SelectItem>
-                        <SelectItem value="exame">Exame</SelectItem>
+                        <SelectItem value="Cirurgia">Cirurgia</SelectItem>
+                        <SelectItem value="Consulta">Consulta</SelectItem>
+                        <SelectItem value="Exame">Exame</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -163,8 +195,9 @@ const Procedimentos = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Tipos</SelectItem>
-                  <SelectItem value="cirurgia">Cirurgia</SelectItem>
-                  <SelectItem value="laboratorial">Laboratorial</SelectItem>
+                  <SelectItem value="Cirurgia">Cirurgia</SelectItem>
+                  <SelectItem value="Consulta">Consulta</SelectItem>
+                  <SelectItem value="Exame">Exame</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -173,8 +206,8 @@ const Procedimentos = () => {
 
         {/* Procedures List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProcedures.map((procedure: any) => {
-            const IconComponent = getTypeIcon(procedure.tipo);
+          {filteredProcedures.map((procedure) => {
+            const IconComponent = getTypeIcon(procedure.type);
             return (
               <Card key={procedure.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -182,9 +215,9 @@ const Procedimentos = () => {
                     <div className="flex items-center gap-2">
                       <IconComponent className="h-5 w-5 text-primary" />
                       <div>
-                        <CardTitle className="text-lg">{procedure.nome_procedimento}</CardTitle>
+                        <CardTitle className="text-lg">{procedure.name}</CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          {procedure.procedimento_codigo} • {procedure.nome_especialidade}
+                          {procedure.code} • {procedure.category}
                         </p>
                       </div>
                     </div>
@@ -199,18 +232,17 @@ const Procedimentos = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">{procedure.description}</p>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Tipo:</span>
-                      <Badge>{procedure.tipo}</Badge>
+                      <span className="text-sm font-medium">Complexidade:</span>
+                      <Badge className={getComplexityColor(procedure.complexity)}>
+                        {procedure.complexity}
+                      </Badge>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Data Agendada:</span>
-                      <span className="text-sm">{new Date(procedure.data_agendada).toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Leito:</span>
-                      <span className="text-sm">{procedure.leito}</span>
+                      <span className="text-sm font-medium">Tempo Estimado:</span>
+                      <span className="text-sm">{procedure.estimatedTime}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Status:</span>

@@ -88,6 +88,8 @@ app.use("/api/appointments", appointmentsRoutes);
 const faturamentoRoutes = require("./routes/faturamentoRoutes");
 app.use("/api", faturamentoRoutes);
 
+const procedimentosRoutes = require("./routes/procedimentosRoutes");
+app.use("/api", procedimentosRoutes);
 
 // Subir o servidor
 app.listen(3001, () => {
