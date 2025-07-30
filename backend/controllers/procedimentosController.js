@@ -9,6 +9,7 @@ exports.getAllProcedimentos = async (req, res) => {
       SELECT * FROM procedimentos_agendados
     `;
     const [result] = await db.query(query);
+        console.log("Resultado da query:", result);
     res.status(200).json(result);
   } catch (error) {
     console.error("Erro ao buscar procedimentos:", error);
