@@ -1,37 +1,55 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { BackButton } from "@/components/ui/back-button";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import Calendar from '@/components/ui/CalendarIcon';
-import Users from '@/components/ui/UsersIcon';
+import Calendar from "@/components/ui/CalendarIcon";
+import Users from "@/components/ui/UsersIcon";
 import HospitalLayout from "@/components/HospitalLayout";
-import { HeartPulse, Activity, Edit, Trash2, Plus, Search, Filter } from "lucide-react";
-import { getAllProcedimentos } from '@/services/procedimentos/getProcedimentos';
+import { HeartPulse, Activity, Edit, Trash2, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { getAllProcedimentos } from "@/services/procedimentos/getProcedimentos";
 
 const Procedimentos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [procedures, setProcedures] = useState([]);
+  const [procedures, setProcedures] = useState<any[] | null>(null);
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 6;
+
+  const fetchProcedures = async () => {
+    try {
+      const res = await getAllProcedimentos(currentPage, limit);
+      setProcedures(res.procedimentos);
+      setTotalPages(Math.ceil(res.total / limit));
+    } catch (error) {
+      console.error("Erro ao carregar procedimentos:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchProcedures = async () => {
-      try {
-        const data = await getAllProcedimentos();
-        setProcedures(data);
-      } catch (error) {
-        console.error("Erro ao carregar procedimentos:", error);
-      }
-    };
-
     fetchProcedures();
-  }, []);
+  }, [currentPage]);
 
   const getComplexityColor = (complexity: string) => {
     switch (complexity) {
@@ -41,25 +59,32 @@ const Procedimentos = () => {
         return "bg-yellow-100 text-yellow-800";
       case "Alta":
         return "bg-red-100 text-red-800";
+      case "Complexa":
+        return "bg-red-600 text-yellow-100";
+      case "Moderada":
+        return "bg-pink-300 text-silver-100";
+      case "Eletiva":
+        return "bg-blue-300 text-silver-100";
       default:
         return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeIcon = (type: string) => {
-    return type === "cirurgia" ? Activity : HeartPulse;
+    return type === "Cirurgia" ? Activity : HeartPulse;
   };
 
-  const filteredProcedures = procedures.filter((procedure: any) => {
+  const filteredProcedures = (procedures ?? []).filter((procedure) => {
     const matchesSearch =
       procedure.nome_procedimento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      procedure.procedimento_codigo.toLowerCase().includes(searchTerm.toLowerCase());
+      procedure.codigo.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === "all" || procedure.tipo === filterType;
     return matchesSearch && matchesType;
   });
 
+
   return (
-    <HospitalLayout currentPage="procedimentos" onPageChange={() => {}}>
+    <HospitalLayout currentPage="procedimentos" onPageChange={() => { }}>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -95,9 +120,9 @@ const Procedimentos = () => {
                         <SelectValue placeholder="Selecionar tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cirurgia">Cirurgia</SelectItem>
-                        <SelectItem value="consulta">Consulta</SelectItem>
-                        <SelectItem value="exame">Exame</SelectItem>
+                        <SelectItem value="Cirurgia">Cirurgia</SelectItem>
+                        <SelectItem value="Consulta">Consulta</SelectItem>
+                        <SelectItem value="Exame">Exame</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -163,8 +188,9 @@ const Procedimentos = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Tipos</SelectItem>
-                  <SelectItem value="cirurgia">Cirurgia</SelectItem>
-                  <SelectItem value="laboratorial">Laboratorial</SelectItem>
+                  <SelectItem value="Cirurgia">Cirurgia</SelectItem>
+                  <SelectItem value="Consulta">Consulta</SelectItem>
+                  <SelectItem value="Exame">Exame</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -173,7 +199,7 @@ const Procedimentos = () => {
 
         {/* Procedures List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProcedures.map((procedure: any) => {
+          {filteredProcedures.map((procedure) => {
             const IconComponent = getTypeIcon(procedure.tipo);
             return (
               <Card key={procedure.id} className="hover:shadow-lg transition-shadow">
@@ -199,18 +225,17 @@ const Procedimentos = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">{procedure.descricao}</p>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Tipo:</span>
-                      <Badge>{procedure.tipo}</Badge>
+                      <span className="text-sm font-medium">Complexidade:</span>
+                      <Badge className={getComplexityColor(procedure.complexidade)}>
+                        {procedure.complexidade}
+                      </Badge>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Data Agendada:</span>
-                      <span className="text-sm">{new Date(procedure.data_agendada).toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Leito:</span>
-                      <span className="text-sm">{procedure.leito}</span>
+                      <span className="text-sm font-medium">Tempo Estimado:</span>
+                      <span className="text-sm">{procedure.tempo_estimado}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Status:</span>
@@ -222,6 +247,23 @@ const Procedimentos = () => {
             );
           })}
         </div>
+
+        {/* Paginação */}
+        {filteredProcedures.length > 0 && (
+          <div className="flex justify-center gap-4 mt-6">
+            <Button variant="outline" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Anterior
+            </Button>
+            <span className="text-sm font-medium mt-2">
+              Página {currentPage} de {totalPages}
+            </span>
+            <Button variant="outline" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+              Próxima
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        )}
 
         {filteredProcedures.length === 0 && (
           <Card>
