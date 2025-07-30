@@ -24,32 +24,45 @@ import Calendar from "@/components/ui/CalendarIcon";
 import Users from "@/components/ui/UsersIcon";
 import HospitalLayout from "@/components/HospitalLayout";
 import { HeartPulse, Activity, Edit, Trash2, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
-import { getAllProcedimentos } from "@/services/procedimentos/getProcedimentos";
+import { getProcedimentos } from "@/services/procedimentos/getProcedimentos";
+
+
 
 const Procedimentos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [procedures, setProcedures] = useState<any[] | null>(null);
+  
+  const [procedures, setProcedures] = useState<any[]>([]);
 
+   console.log("Procedures", procedures); // <-- Aqui
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 6;
 
-  const fetchProcedures = async () => {
-    try {
-      const res = await getAllProcedimentos(currentPage, limit);
-      setProcedures(res.procedimentos);
-      setTotalPages(Math.ceil(res.total / limit));
-    } catch (error) {
-      console.error("Erro ao carregar procedimentos:", error);
-    }
-  };
+const fetchProcedures = async () => {
+  try {
+    const res = await getProcedimentos({
+      page: currentPage,
+      limit,
+      orderBy: "nome_procedimento",
+      statusFilter: "Ativo",
+      tipo: filterType !== "all" ? filterType : null,
+    });
+    console.log("API response:", res);
+    setProcedures(res); // recebe o array direto
+    setTotalPages(1); // ou calcule baseado na sua lógica de paginação, se existir
+  } catch (error) {
+    console.error("Erro ao carregar procedimentos:", error);
+  }
+};
 
-  useEffect(() => {
-    fetchProcedures();
-  }, [currentPage]);
+
+useEffect(() => {
+  fetchProcedures();
+}, [currentPage, filterType]);
+
 
   const getComplexityColor = (complexity: string) => {
     switch (complexity) {
@@ -74,14 +87,13 @@ const Procedimentos = () => {
     return type === "Cirurgia" ? Activity : HeartPulse;
   };
 
-  const filteredProcedures = (procedures ?? []).filter((procedure) => {
-    const matchesSearch =
-      procedure.nome_procedimento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      procedure.codigo.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || procedure.tipo === filterType;
-    return matchesSearch && matchesType;
-  });
-
+const filteredProcedures = (procedures ?? []).filter((procedure) => {
+  const matchesSearch =
+    procedure.nome_procedimento.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    procedure.procedimento_codigo.toLowerCase().includes(searchTerm.toLowerCase());
+  const matchesType = filterType === "all" || procedure.tipo === filterType;
+  return matchesSearch && matchesType;
+});
 
   return (
     <HospitalLayout currentPage="procedimentos" onPageChange={() => { }}>
