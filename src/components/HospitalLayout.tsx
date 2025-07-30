@@ -179,9 +179,16 @@ export default function HospitalLayout({ children, currentPage, onPageChange }: 
           </nav>
 
           {/* Sidebar Footer */}
+            <div className="mt-auto p-4">
+    <img
+      src="../public/logo_cwi_institucional.png"
+      alt="CWI"
+      className="w-full max-w-[120px] mx-auto opacity-70"
+    />
+  </div>
           <div className="absolute bottom-4 left-4 right-4">
             <div className="bg-hospital-light rounded-lg p-4 text-center">
-              <p className="text-sm text-hospital-dark font-medium">Sistema Hospitalar</p>
+              <p className="text-sm text-hospital-dark font-medium">Piloto - Sistema Hospitalar</p>
               <p className="text-xs text-gray-600 mt-1">Versão 1.0</p>
             </div>
           </div>
